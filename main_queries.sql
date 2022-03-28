@@ -1,11 +1,12 @@
 -----------------------------------------------------Queries--------------------------------------------------------------
 
---See number of male and female animals
+--See number of animals in each color
 SELECT
-	sex
-	, COUNT(sex)
+	color
+	, COUNT(color)
 FROM hotel_1
-GROUP BY sex;
+GROUP BY color
+ORDER BY color;
 
 --See most basic information about first ten animals (ordered by id)
 SELECT
@@ -30,17 +31,27 @@ SELECT
 FROM hotel_1
 WHERE name ILIKE 'b%';
 
---See 
+--See information about each animal in sepearted columns
 SELECT
 	animal_id
 	, name
-	, SUBSTRING(owner_info FROM POSITION(' ' IN owner_info) FOR 12) AS "owner phone number"
-	--, owner_info AS "oowner name"
-FROM hotel_1
+	, REVERSE(SUBSTRING(REVERSE(owner_info) FROM POSITION(' ' IN REVERSE(owner_info)) FOR 20)) AS "owner full name"
+	, RIGHT(owner_info, 12) AS "owner phone number"
+FROM hotel_1;
 
+--See TODO
+SELECT
+	*
+	, s.species_name
+	, s.rules_for_species
+	, r.room_type
+	, r.room_floor_num
+FROM hotel_1 as h
+INNER JOIN species AS s ON s.species_id = h.species_id
+INNER JOIN rooms AS r ON r.room_id = h.room_id
+ORDER BY h.animal_id DESC;
 
-
-
+--TODO: write query which works with date-colums and use COALESCE()
 
 
 
