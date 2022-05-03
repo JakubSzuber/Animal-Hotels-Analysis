@@ -3,7 +3,7 @@
 /*
 	QUERIES FOR TABLE hotel_1 (and its relations)
 */
---Select number of animals in each color
+--Select number of animals in each color (prdered by animals' color)
 SELECT
 	color
 	, COUNT(color)
@@ -11,38 +11,40 @@ FROM hotel_1
 GROUP BY color
 ORDER BY color;
 
---Select most basic information about first ten animals (ordered by id)
+--Select most basic information about first ten animals (ordered by animals' id)
 SELECT
 	h.animal_id
 	, h.name
-	, sex
+	, h.sex
+	, h.age
 	, s.species_name
 FROM hotel_1 as h
 INNER JOIN species AS s ON s.species_id = h.species_id
 ORDER BY h.animal_id
 LIMIT 11;
 
---Select which are woeking days for driver whose departure animals fromdhotel
+--Select which are working days for driver whose departures animals from the hotel (ordered by departure date)
 SELECT
 	DISTINCT(planning_departure_date) AS "driver working days" 
 FROM hotel_1
 ORDER BY "driver working days";
 
---Select animals which anme starts which letter: b
+--Select animals which name starts with letter "b"
 SELECT
 	name
 FROM hotel_1
 WHERE name ILIKE 'b%';
 
---Select information about each animal in sepearted columns
+--Select information about all animal owners in sepearted columns (ordered by owners' id)
 SELECT
 	animal_id
 	, name
 	, REVERSE(SUBSTRING(REVERSE(owner_info) FROM POSITION(' ' IN REVERSE(owner_info)) FOR 20)) AS "owner full name"
 	, RIGHT(owner_info, 12) AS "owner phone number"
-FROM hotel_1;
+FROM hotel_1
+ORDER BY name;
 
---Select all columns from table hotel_1 and all colums from tables which are in relation to them
+--Select all columns from table hotel_1 and all significant colums from tables which are in relation with table hotel_1 (orderd by animals' id)
 SELECT
 	*
 	, s.species_name
@@ -54,7 +56,7 @@ INNER JOIN species AS s ON s.species_id = h.species_id
 INNER JOIN rooms AS r ON r.room_id = h.room_id
 ORDER BY h.animal_id DESC;
 
---Select arrival and departure dates of each animal
+--Select arrival and departure dates of each animal without any NULL cells (ordered by arrival date)
 SELECT
 	animal_id
 	, name
@@ -67,13 +69,13 @@ ORDER BY arrival_date;
 /*
 	QUERIES FOR TABLE hotel_2 (and its relations)
 */
---Select all types of primary and secondary color for each color group
+--Select all types of primary and secondary color for each color group (orderd by color group)
 SELECT
 	DISTINCT color_group, primary_color, secondary_color
 FROM hotel_2
 ORDER BY color_group;
 
---Select most basic information about first ten animals (ordered by id)
+--Select most basic information about first ten animals with using significant colums from tables which are in relation with table hotel_1 (ordered by animals' id)
 SELECT
 	h.animal_id
 	, s.species_name
@@ -88,7 +90,7 @@ INNER JOIN breeds AS b ON b.breed_id = h.breed_id
 ORDER BY h.animal_id
 LIMIT 11;
 
---Select all columns from table hotel_2 and all colums from tables which are in relation to them TODOOOOOOOOOOOOOOOOOOOOOOO
+--Select all columns from table hotel_2 and all significant colums from tables which are in relation with table hotel_1 (orderd by animals' id)
 SELECT
 	*
 	, s.species_name
@@ -101,20 +103,21 @@ INNER JOIN species AS s ON s.species_id = h.species_id
 INNER JOIN breeds AS b ON b.breed_id = h.breed_id
 ORDER BY h.animal_id DESC;
 
---Select how long is planning time for be in hotel for each animal
+--Select how long is planning time for be in hotel for each animal (orderd by animals' id)
 SELECT
 	animal_id
 	, arrival_time
 	, arrival_date
 	, planning_departure_date
 	, AGE(planning_departure_date, arrival_date) AS "time_of_visit"
-FROM hotel_2;
+FROM hotel_2
+ORDER BY animal_id;
 
 
 /*
-	QUERIES FOR MULTIPLE TABLES TODO: (zmien moze nazwe tego na np. zapytania z obydwu tabel. Mozesz rowiez zrobuc kolejna sekcje dla tabel mniej waznych (breeds, rooms, species))
+	QUERIES FOR BOTH MOST IMPORTANT TABLES - hotel_1 and hotel_2 (and their relations):
 */
---Select columns from both main tables and connect them to each other (select as many common colums from both tables which it's possible)
+--Select columns from both main tables and connect them to each other (select as many common colums from both tables as it's possible) (ordered by aniamls' id)
 SELECT
 	h1.animal_id
 	, s.species_name
@@ -137,7 +140,7 @@ INNER JOIN species AS s ON s.species_id = h2.species_id
 
 ORDER BY animal_id;
 
---Select columns from both main which comtain informations about animal's sex
+--Select columns from both main which comtain informations about animal's sex (ordered by animals' id)
 SELECT
 	h1.animal_id
 	, h1.sex
@@ -156,7 +159,7 @@ FROM hotel_2 as h2
 
 ORDER BY animal_id;
 
---First create view which contains difference colors with number of animals for each one (but there's a problem with repetition of colors), then select unique colors with currect numbers from that view (solved a problem)
+--First create view which contains difference colors with number of animals for each one (but there's a problem with repetition of colors), then select unique colors with currect numbers from that view (solve a problem)
 /*
 CREATE VIEW vw_animal_colors
 AS
@@ -210,16 +213,16 @@ ORDER BY animal_id;
 
 
 
+-- Pomysly na zapytania do hotel_1
+--TODO zrob zapytanie ktore przy uzyciu UGRADE w hotel_1 zaktualizuje wiek zwierzecia na podstawie daty urodzenia oraz obecnej daty
+--TODO zselectowac zwierzeta ktore maja ponizej roku a nie sa zaszczepione a nastepnie z zselectowac z tych zwierzat numery do wlascicilei tych zwierzat w celu kontaktu (moze jakies podzapytanie albo cos podobnego!)
+--TODO obliczyc jak dlugo palnowany jest pobyt kazdego z zwierzat a jak nie wiedoma jest data odjazdu to wstawic wartosc dni ktore zwierze przebywa od czasu przyjazdu do dnia dzisiejszego! Cos jak w statnik zapytaniu do tabeli hotel_2
+
+-- Pomysly na zapytania do hotel_2
+--TODO zrob zapytanie ktore przy uzyciu UGRADE w hotel_1 zaktualizuje wiek zwierzecia na podstawie daty urodzenia oraz obecnej daty
 
 
-
-
-
-
-
-
-
-
-
-
---TODO in the end remember all sql queries and how can youuse them to extend made queries (e.g crate viev from queries which select all information form table and its relation)
+--TODO dopracuj do idealu kazde z zapytan
+--TODO in the end remember all sql queries and how can you use them to extend made queries (e.g crate viev from queries which select all information form table and its relation)
+--TODO extend README.md!!! (then the project will be finished), and say something about sources how you take those tables and say you learn how to use exel and how to import exel files into postgres
+--TODO uncoment part of code which creates a view
