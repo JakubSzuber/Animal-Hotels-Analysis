@@ -65,6 +65,32 @@ SELECT
 FROM hotel_1
 ORDER BY arrival_date;
 
+/*
+	Select some information about each animal and duration of stay for all animals, these animals that are currently at hotel for sure and these 
+	which have planning departure date - could be at hotel (orderd by animls's id)
+*/
+SELECT
+	animal_id
+	, name
+	, CASE
+		WHEN planning_departure_date IS NULL THEN 'yes'
+		ELSE 'unknown'
+	END AS "currently at hotel"
+	, COALESCE(age(planning_departure_date, arrival_date), age(NOW(), arrival_date)) AS "stay duration"
+FROM hotel_1
+ORDER BY animal_id;
+
+--Select information about owners, whose animals is not vaccinated and aren't old, in order to contact them
+SELECT
+	REVERSE(SUBSTRING(REVERSE(owner_info) FROM POSITION(' ' IN REVERSE(owner_info)) FOR 20)) AS "owner full name"
+	, RIGHT(owner_info, 12) AS "owner phone number"
+FROM hotel_1
+WHERE vaccinated = (SELECT vaccinated WHERE vaccinated = 'false' AND CAST(age AS INTERVAL) < '12 years');
+
+--Query which update age of each animal to the actual value
+UPDATE hotel_1
+SET age = SUBSTRING(CAST(AGE(NOW(), born_date) AS VARCHAR) FROM 0 FOR POSITION('ns' IN CAST(age AS VARCHAR))+2);
+
 
 /*
 	QUERIES FOR TABLE hotel_2 (and its relations)
@@ -113,6 +139,12 @@ SELECT
 FROM hotel_2
 ORDER BY animal_id;
 
+--Query which update age of each animal to the actual value
+UPDATE hotel_2
+	SET 
+	years_old = CAST(SUBSTRING(CAST(AGE(NOW(), born_date) AS VARCHAR) FROM 1 FOR POSITION(' ' IN CAST(AGE(NOW(), born_date) AS VARCHAR))-1) AS INT)
+	, months_old = CAST(TRIM(SUBSTRING(CAST(AGE(NOW(), born_date) AS VARCHAR) FROM POSITION('rs ' IN CAST(AGE(NOW(), born_date) AS VARCHAR))+3 FOR 2)) AS INT);
+
 
 /*
 	QUERIES FOR BOTH MOST IMPORTANT TABLES - hotel_1 and hotel_2 (and their relations):
@@ -159,8 +191,11 @@ FROM hotel_2 as h2
 
 ORDER BY animal_id;
 
---First create view which contains difference colors with number of animals for each one (but there's a problem with repetition of colors), then select unique colors with currect numbers from that view (solve a problem)
 /*
+	First create view which contains difference colors with number of animals for each one (but there's a problem with repetition of colors), then select
+	unique colors with currect numbers from that view (solve a problem)
+*/
+
 CREATE VIEW vw_animal_colors
 AS
 	SELECT
@@ -182,7 +217,7 @@ AS
 		, COUNT(h2.color_group) AS "number_of_animals"
 	FROM hotel_2 as h2
 	GROUP BY h2.color_group;
-*/ --TODO: when you and whole project uncomment this part
+*/
 
 SELECT 
 	color
@@ -210,19 +245,5 @@ FROM hotel_2 AS h2
 ORDER BY animal_id;
 
 
-
-
-
--- Pomysly na zapytania do hotel_1
---TODO zrob zapytanie ktore przy uzyciu UGRADE w hotel_1 zaktualizuje wiek zwierzecia na podstawie daty urodzenia oraz obecnej daty
---TODO zselectowac zwierzeta ktore maja ponizej roku a nie sa zaszczepione a nastepnie z zselectowac z tych zwierzat numery do wlascicilei tych zwierzat w celu kontaktu (moze jakies podzapytanie albo cos podobnego!)
---TODO obliczyc jak dlugo palnowany jest pobyt kazdego z zwierzat a jak nie wiedoma jest data odjazdu to wstawic wartosc dni ktore zwierze przebywa od czasu przyjazdu do dnia dzisiejszego! Cos jak w statnik zapytaniu do tabeli hotel_2
-
--- Pomysly na zapytania do hotel_2
---TODO zrob zapytanie ktore przy uzyciu UGRADE w hotel_1 zaktualizuje wiek zwierzecia na podstawie daty urodzenia oraz obecnej daty
-
-
---TODO dopracuj do idealu kazde z zapytan
 --TODO in the end remember all sql queries and how can you use them to extend made queries (e.g crate viev from queries which select all information form table and its relation)
 --TODO extend README.md!!! (then the project will be finished), and say something about sources how you take those tables and say you learn how to use exel and how to import exel files into postgres
---TODO uncoment part of code which creates a view
