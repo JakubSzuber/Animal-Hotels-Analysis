@@ -3,7 +3,7 @@
 /*
 	QUERIES FOR TABLE hotel_1 (and its relations)
 */
---Select number of animals in each color (prdered by animals' color)
+--Select number of animals in each color (ordered by animals' color)
 SELECT
 	color
 	, COUNT(color)
@@ -11,7 +11,7 @@ FROM hotel_1
 GROUP BY color
 ORDER BY color;
 
---Select most basic information about first ten animals (ordered by animals' id)
+--Select most basic information about 15 animals with starting from 11'th animal (ordered by animals' id)
 SELECT
 	h.animal_id
 	, h.name
@@ -21,7 +21,7 @@ SELECT
 FROM hotel_1 as h
 INNER JOIN species AS s ON s.species_id = h.species_id
 ORDER BY h.animal_id
-LIMIT 11;
+LIMIT 15 OFFSET 10;
 
 --Select which are working days for driver whose departures animals from the hotel (ordered by departure date)
 SELECT
@@ -35,14 +35,15 @@ SELECT
 FROM hotel_1
 WHERE name ILIKE 'b%';
 
---Select information about all animal owners in sepearted columns (ordered by owners' id)
+--Select information about first 20 animal owners in sepearted columns (ordered by owners' id)
 SELECT
 	animal_id
 	, name
 	, REVERSE(SUBSTRING(REVERSE(owner_info) FROM POSITION(' ' IN REVERSE(owner_info)) FOR 20)) AS "owner full name"
 	, RIGHT(owner_info, 12) AS "owner phone number"
 FROM hotel_1
-ORDER BY name;
+ORDER BY name
+LIMIT 20;
 
 --Select all columns from table hotel_1 and all significant colums from tables which are in relation with table hotel_1 (orderd by animals' id)
 SELECT
@@ -95,7 +96,7 @@ SET age = SUBSTRING(CAST(AGE(NOW(), born_date) AS VARCHAR) FROM 0 FOR POSITION('
 /*
 	QUERIES FOR TABLE hotel_2 (and its relations)
 */
---Select all types of primary and secondary color for each color group (orderd by color group)
+--Select all types of primary and secondary color for each color group (ordered by color group)
 SELECT
 	DISTINCT color_group, primary_color, secondary_color
 FROM hotel_2
@@ -172,7 +173,7 @@ INNER JOIN species AS s ON s.species_id = h2.species_id
 
 ORDER BY animal_id;
 
---Select columns from both main which comtain informations about animal's sex (ordered by animals' id)
+--Select columns from both main tables which contain informations about animals' sex (ordered by animals' id)
 SELECT
 	h1.animal_id
 	, h1.sex
@@ -192,8 +193,8 @@ FROM hotel_2 as h2
 ORDER BY animal_id;
 
 /*
-	First create view which contains difference colors with number of animals for each one (but there's a problem with repetition of colors), then select
-	unique colors with currect numbers from that view (solve a problem)
+	First create view which contains difference colors with number of animals for each one (but there's a problem with repeatability of colors), then select
+	from that view unique colors with correct animals number for each one (solve a problem with repeatability)
 */
 
 CREATE VIEW vw_animal_colors
@@ -217,7 +218,7 @@ AS
 		, COUNT(h2.color_group) AS "number_of_animals"
 	FROM hotel_2 as h2
 	GROUP BY h2.color_group;
-*/
+
 
 SELECT 
 	color
