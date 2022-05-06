@@ -1,39 +1,36 @@
-----------------------------------------------------------------------------Queries-------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------Queries--------------------------------------------------------------------------------------
 
 /*
 	QUERIES FOR TABLE hotel_1 (and its relations)
 */
---Select number of animals in each color (ordered by animals' color)
+--Select colors and number of animals with each color but only select these colors in which there are at least 5 animals (ordered by animals' color)
 SELECT
 	color
-	, COUNT(color)
+	, COUNT(color) AS "number of animals"
 FROM hotel_1
 GROUP BY color
+HAVING COUNT(color) >= 5 
 ORDER BY color;
 
---Select most basic information about 15 animals with starting from 11'th animal (ordered by animals' id)
-SELECT
-	h.animal_id
-	, h.name
-	, h.sex
-	, h.age
-	, s.species_name
-FROM hotel_1 as h
-INNER JOIN species AS s ON s.species_id = h.species_id
-ORDER BY h.animal_id
-LIMIT 15 OFFSET 10;
+--Create a view from query which selects important information about 15 animals starting from 11'th animal from table hotel_1 and its relations (ordered by animals' id)
+CREATE VIEW vw_basic_an_info_1
+AS
+	SELECT
+		h.animal_id
+		, h.name
+		, h.sex
+		, h.age
+		, s.species_name
+	FROM hotel_1 as h
+	INNER JOIN species AS s ON s.species_id = h.species_id
+	ORDER BY h.animal_id
+	LIMIT 15 OFFSET 10;
 
 --Select which are working days for driver whose departures animals from the hotel (ordered by departure date)
 SELECT
 	DISTINCT(planning_departure_date) AS "driver working days" 
 FROM hotel_1
 ORDER BY "driver working days";
-
---Select animals which name starts with letter "b"
-SELECT
-	name
-FROM hotel_1
-WHERE name ILIKE 'b%';
 
 --Select information about first 20 animal owners in sepearted columns (ordered by owners' id)
 SELECT
@@ -92,6 +89,16 @@ WHERE vaccinated = (SELECT vaccinated WHERE vaccinated = 'false' AND CAST(age AS
 UPDATE hotel_1
 SET age = SUBSTRING(CAST(AGE(NOW(), born_date) AS VARCHAR) FROM 0 FOR POSITION('ns' IN CAST(age AS VARCHAR))+2);
 
+--Select animals with their ids but only these ones which was born between 2000-2006 included and are in room with id: 1 or 2 or 3
+SELECT
+	animal_id
+	, name
+FROM hotel_1
+WHERE DATE_PART('year', born_date) BETWEEN 2000 AND 2006 AND room_id IN (1, 2, 3);
+
+--Select combination of animals' names which starts with letter "b" (ordered by animals' id)
+SELECT string_agg(name, ', ' ORDER BY animal_id) FROM hotel_1 WHERE name ILIKE 'b%'
+
 
 /*
 	QUERIES FOR TABLE hotel_2 (and its relations)
@@ -102,20 +109,22 @@ SELECT
 FROM hotel_2
 ORDER BY color_group;
 
---Select most basic information about first ten animals with using significant colums from tables which are in relation with table hotel_1 (ordered by animals' id)
-SELECT
-	h.animal_id
-	, s.species_name
-	, b.breed_group_name
-	, h.sex
-	, h.years_old
-	, h.months_old
-	, h.animal_condition
-FROM hotel_2 AS h
-INNER JOIN species AS s ON s.species_id = h.species_id
-INNER JOIN breeds AS b ON b.breed_id = h.breed_id
-ORDER BY h.animal_id
-LIMIT 11;
+--Create a view from query which selects most important information about first 10 animals from table hotel_2 and its relations (ordered by animals' id)
+CREATE VIEW vw_basic_an_info_2
+AS
+	SELECT
+		h.animal_id
+		, s.species_name
+		, b.breed_group_name
+		, h.sex
+		, h.years_old
+		, h.months_old
+		, h.animal_condition
+	FROM hotel_2 AS h
+	INNER JOIN species AS s ON s.species_id = h.species_id
+	INNER JOIN breeds AS b ON b.breed_id = h.breed_id
+	ORDER BY h.animal_id
+	LIMIT 10;
 
 --Select all columns from table hotel_2 and all significant colums from tables which are in relation with table hotel_1 (orderd by animals' id)
 SELECT
@@ -244,7 +253,3 @@ SELECT
 FROM hotel_2 AS h2
 
 ORDER BY animal_id;
-
-
---TODO in the end remember all sql queries and how can you use them to extend made queries (e.g crate viev from queries which select all information form table and its relation)
---TODO extend README.md!!! (then the project will be finished), and say something about sources how you take those tables and say you learn how to use exel and how to import exel files into postgres
