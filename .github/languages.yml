@@ -1,0 +1,18 @@
+SQL:
+  type: data
+  color: "#e38c00"
+  tm_scope: source.sql
+  ace_mode: sql
+  codemirror_mode: sql
+  codemirror_mime_type: text/x-sql
+  extensions:
+  - ".sql"
+  - ".cql"
+  - ".ddl"
+  - ".inc"
+  - ".mysql"
+  - ".prc"
+  - ".tab"
+  - ".udf"
+  - ".viw"
+  language_id: 333
