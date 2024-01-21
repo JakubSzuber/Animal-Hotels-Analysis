@@ -10,7 +10,7 @@ SELECT
 FROM hotel_1
 GROUP BY color
 HAVING COUNT(color) >= 5 
-ORDER BY color;
+ORDER BY colo;
 
 --Create a view from query which selects important information about 15 animals starting from 11'th animal from table hotel_1 and its relations (ordered by animals' id)
 CREATE VIEW vw_basic_an_info_1
