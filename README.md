@@ -28,3 +28,4 @@ This is a project which contains a bunch of SQL queries to analyze several table
 1. [hotel_1.csv](https://github.com/JakubSzuber/Animal-Hotels-Analysis/files/8651153/hotel_1.csv)
 2. [hotel_2.csv](https://github.com/JakubSzuber/Animal-Hotels-Analysis/files/8651166/hotel_2.csv)
 3. [breeds.csv](https://github.com/JakubSzuber/Animal-Hotels-Analysis/files/8651168/breeds.csv)
+
